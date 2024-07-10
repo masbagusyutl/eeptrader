@@ -58,5 +58,5 @@ def next_account():
     return jsonify({'status': 'success', 'new_account': accounts[current_account_index]['username'], 'account_index': current_account_index + 1, 'total_accounts': len(accounts)})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
 
