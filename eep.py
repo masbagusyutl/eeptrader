@@ -1,62 +1,35 @@
-from flask import Flask, request, jsonify
 import requests
-import json
 
-app = Flask(__name__)
+# URL for GET request (partial)
+base_url = 'https://mc.yandex.ru/clmap/97646772?page-url=https%3A%2F%2Fclicker.spin.fi%2F%23tgWebAppData%3D'
 
-# Fungsi untuk membaca data akun dari data.txt
-def read_accounts():
-    with open('data.txt', 'r') as file:
-        data = file.read()
-        accounts = json.loads(data)
-    return accounts
+# URL for POST request
+url_post = 'https://clicker-backend.spin.fi/api/clicks/apply'
 
-# Variabel global untuk menyimpan data akun dan indeks akun saat ini
-accounts = read_accounts()
-current_account_index = 0
+# Read additional parameters from data.txt
+with open('data.txt', 'r') as file:
+    additional_params = file.read().strip()  # Read data.txt content as string
 
-@app.route('/tap', methods=['GET'])
-def tap():
-    global current_account_index
-    
-    # Mengambil akun yang saat ini digunakan
-    current_account = accounts[current_account_index]
-    
-    # URL dasar login
-    base_login_url = "https://mc.yandex.ru/clmap/97646772?page-url=https%3A%2F%2Fclicker.spin.fi%2F%23tgWebAppData%3D"
-    
-    # URL lengkap login dengan query string dari data.txt
-    login_url = base_login_url + current_account['query_string']
-    
-    # Mengirim permintaan GET untuk login
-    login_response = requests.get(login_url)
-    
-    if login_response.status_code == 200:
-        # URL untuk verifikasi tap
-        verify_url = 'https://clicker-backend.spin.fi/api/clicks/apply?clicks=21'
-        
-        # Data untuk verifikasi tap
-        query_data = current_account['query_data']
-        
-        # Mengirim permintaan POST untuk verifikasi tap
-        response = requests.post(verify_url, json=query_data)
-        
-        if response.status_code == 200:
-            return jsonify({'status': 'success', 'account': current_account['username'], 'account_index': current_account_index + 1, 'total_accounts': len(accounts)})
-        else:
-            return jsonify({'status': 'failed', 'message': 'Verification failed'})
-    else:
-        return jsonify({'status': 'failed', 'message': 'Login failed'})
+# Combine base_url and additional_params
+url_get = base_url + additional_params
 
-@app.route('/next_account', methods=['POST'])
-def next_account():
-    global current_account_index
-    
-    # Pindah ke akun berikutnya
-    current_account_index = (current_account_index + 1) % len(accounts)
-    
-    return jsonify({'status': 'success', 'new_account': accounts[current_account_index]['username'], 'account_index': current_account_index + 1, 'total_accounts': len(accounts)})
+# Perform GET request
+response_get = requests.get(url_get)
 
-if __name__ == '__main__':
-    app.run(debug=False)
+if response_get.status_code == 200:
+    print('GET request successful.')
+    print('Response content:')
+    print(response_get.text)
+else:
+    print(f'GET request failed with status code {response_get.status_code}.')
 
+# Perform POST request
+payload = {'clicks': '21'}  # Example payload for POST request
+response_post = requests.post(url_post, data=payload)
+
+if response_post.status_code == 200:
+    print('POST request successful.')
+    print('Response content:')
+    print(response_post.text)
+else:
+    print(f'POST request failed with status code {response_post.status_code}.')
