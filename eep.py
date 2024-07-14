@@ -12,19 +12,13 @@ def read_authorizations(file_path):
 def process_account(auth_token):
     url = "https://clicker-backend.spin.fi/api/clicks/apply?clicks=1"
     headers = {
-        ":authority": "clicker-backend.spin.fi",
-        ":method": "POST",
-        ":path": "/api/clicks/apply?clicks=1",
-        ":scheme": "https",
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate, br, zstd",
         "Accept-Language": "en-GB,en;q=0.9,en-US;q=0.8",
         "Authorization": f"Bearer {auth_token}",
         "Cache-Control": "no-cache",
-        "Content-Length": "0",
         "Origin": "https://clicker.spin.fi",
         "Pragma": "no-cache",
-        "Priority": "u=1, i",
         "Referer": "https://clicker.spin.fi/",
         "Sec-Ch-Ua": "\"Not/A)Brand\";v=\"8\", \"Chromium\";v=\"126\", \"Microsoft Edge\";v=\"126\", \"Microsoft Edge WebView2\";v=\"126\"",
         "Sec-Ch-Ua-Mobile": "?0",
